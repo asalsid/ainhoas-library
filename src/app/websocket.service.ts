@@ -1,5 +1,12 @@
 import { Injectable, signal } from '@angular/core';
-import { Book } from '../server';
+
+export interface Book {
+    id: number;
+    title: string;
+    author: string;
+    year: string;
+    genre: string;
+}
 
 @Injectable({ providedIn: 'root' })
 export class WebsocketService {
@@ -19,10 +26,6 @@ export class WebsocketService {
                 console.warn('Unknown message type:', msg.type);
             }
         };
-    }
-
-    getBook(id: number) {
-        this.ws.send(JSON.stringify({ type: 'getBook', data: { id } }));
     }
 
     addBook(book: Book) {

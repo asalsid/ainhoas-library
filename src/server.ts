@@ -2,20 +2,23 @@ import express from 'express';
 import http from 'http';
 import { WebSocketServer, WebSocket } from 'ws';
 
-export interface Book {
-    id: number;
-    title: string;
-    author?: string;
-    year?: string;
-    cover?: string;
-}
-
 const PORT = process.env['PORT'] || 3000;
 const app = express();
 const server = http.createServer(app);
 const wss = new WebSocketServer({ server });
 
-let books: Book[] = [];
+interface Book {
+    id: number;
+    title: string;
+    author: string;
+    year: string;
+    genre: string;
+}
+let books: Book[] = [
+  { id: 1, title: "1984", author: "George Orwell", year: "1949", genre: "Dystopian" },
+  { id: 2, title: "To Kill a Mockingbird", author: "Harper Lee", year: "1960", genre: "Fiction" },
+  { id: 3, title: "The Great Gatsby", author: "F. Scott Fitzgerald", year: "1925", genre: "Fiction" }
+];
 
 app.use(express.static('src'));
 

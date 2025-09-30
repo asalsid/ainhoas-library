@@ -1,0 +1,12 @@
+<div class="dialog-backdrop" (click)="closeDialog()"></div>
+<div class="dialog">
+    @for (atribute of book() | keyvalue; track atribute.key) {
+        @if (displayableDetails.includes(atribute.key)) {
+            <p>
+                <strong>{{ atribute.key }}:</strong>
+                <input type="text" value="{{ atribute.value }}" (input)="onInputChange(atribute.key, $event.target.value)" />
+            </p>
+        }
+    }
+    <button (click)="closeDialog()">Confirm</button>
+</div>
