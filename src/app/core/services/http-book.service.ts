@@ -13,14 +13,7 @@ export class HttpBookService implements IBookService {
   constructor() {
     this.eventSource = new EventSource(`${this.apiUrl}/books/events`);
     this.eventSource.onopen = () => {
-      this.http.get<IBook[]>(`${this.apiUrl}/books`).subscribe({
-        next: () => {
-          this.resultMessage.set({ type: 'success', msg: 'Library data updated from server' });
-        },
-        error: (error) => {
-          this.resultMessage.set({ type: 'error', msg: `Failed to load books: ${error.status} - ${error.message}` });
-        }
-      }); 
+      this.loadBooks();
     };
     this.eventSource.onmessage = (event) => {
       const books = JSON.parse(event.data);
@@ -29,7 +22,7 @@ export class HttpBookService implements IBookService {
       if (JSON.stringify(currentBooks) !== JSON.stringify(books)) {
         this.books.set(books);
         if (currentBooks.length > 0) {
-          this.resultMessage.set({ type: 'success', msg: 'Library data updated from server' });
+          this.resultMessage.set({ type: 'success', msg: 'Library data updated with HTTP' });
         }
       }
     };
@@ -39,10 +32,21 @@ export class HttpBookService implements IBookService {
     };
   }
 
+  loadBooks() {
+    this.http.get<IBook[]>(`${this.apiUrl}/books`).subscribe({
+      next: () => {
+        this.resultMessage.set({ type: 'success', msg: 'Books loaded successfully with HTTP' });
+      },
+      error: (error) => {
+        this.resultMessage.set({ type: 'error', msg: `Failed to load books: ${error.status} - ${error.message}` });
+      }
+    }); 
+  }
+
   addBook(book: IBook) {
     this.http.post<IBook>(`${this.apiUrl}/books`, book).subscribe({
       next: () => {
-        this.resultMessage.set({ type: 'success', msg: 'Book added successfully' });
+        this.resultMessage.set({ type: 'success', msg: 'Book added successfully with HTTP' });
       },
       error: () => this.resultMessage.set({ type: 'error', msg: 'Failed to add book' })
     });
@@ -51,7 +55,7 @@ export class HttpBookService implements IBookService {
   updateBook(book: IBook) {
     this.http.put<IBook>(`${this.apiUrl}/books/${book.id}`, book).subscribe({
       next: () => {
-        this.resultMessage.set({ type: 'success', msg: 'Book updated successfully' });
+        this.resultMessage.set({ type: 'success', msg: 'Book updated successfully with HTTP' });
       },
       error: () => this.resultMessage.set({ type: 'error', msg: 'Failed to update book' })
     });
@@ -60,10 +64,14 @@ export class HttpBookService implements IBookService {
   removeBook(id: number) {
     this.http.delete<void>(`${this.apiUrl}/books/${id}`).subscribe({
       next: () => {
-        this.resultMessage.set({ type: 'success', msg: 'Book removed successfully' });
+        this.resultMessage.set({ type: 'success', msg: 'Book removed successfully with HTTP' });
       },
       error: () => this.resultMessage.set({ type: 'error', msg: 'Failed to remove book' })
     });
+  }
+
+  getBook(id: number) {
+    return this.books().find(book => book.id === id);
   }
 
   getBooks() {

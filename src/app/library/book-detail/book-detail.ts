@@ -1,33 +1,67 @@
-import { Component, computed, effect, inject, model, output } from '@angular/core';
-import { KeyValuePipe } from '@angular/common';
+import { Component, computed, effect, inject, signal } from '@angular/core';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Router, ActivatedRoute } from '@angular/router';
 import { IBook, BookManagerService, NotificationService } from '../../core';
 
 @Component({
   selector: 'app-book-detail',
-  imports: [KeyValuePipe],
+  imports: [ReactiveFormsModule],
   templateUrl: './book-detail.html',
   styleUrl: './book-detail.css'
 })
 export class BookDetail {
   private bMService = inject(BookManagerService);
   private nService = inject(NotificationService);
+  private formBuilder = inject(FormBuilder);
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
   
-  book = model<IBook | null>(null);
-  isNew = computed(() => this.book()?.id === 0 || this.book() === null);
+  isNew = false;
+  book = signal<IBook | null>(null);
   resultMessage = this.bMService.getResultMessage();
-  close = output<void>();
-  displayableDetails = ['title', 'author', 'year', 'genre'];
+
+  bookForm: FormGroup = this.formBuilder.group({
+    title: ['', [Validators.required, Validators.minLength(1)]],
+    author: ['', [Validators.required, Validators.minLength(1)]],
+    year: ['', [Validators.required, Validators.pattern(/^\d{4}$/)]],
+    genre: ['', [Validators.required]]
+  });
 
   constructor() {
-    effect(() => {
-      if (this.book() === null) {
-        this.book.set({ id: 0, title: '', author: '', year: '', genre: '' });
+    const resolvedBook = this.route.snapshot.data['book'] as IBook | null;
+    
+    if (resolvedBook) {
+      this.book.set(resolvedBook);
+    } else {
+      this.isNew = true;
+    }
+
+    effect(() => {      
+      if (this.book()) {
+        this.bookForm.patchValue({
+          title: this.book()!.title,
+          author: this.book()!.author,
+          year: this.book()!.year,
+          genre: this.book()!.genre
+        });
       }
     });
   }
 
-  onInputChange(key: string, value: string) {
-    this.book.update(book => ({ ...book, [key]: value } as IBook) );
+  getFieldError(fieldName: string): string {
+    const field = this.bookForm.get(fieldName);
+    if (field && field.invalid && field.touched) {
+      if (field.errors?.['required']) {
+        return `${fieldName.charAt(0).toUpperCase() + fieldName.slice(1)} is required`;
+      }
+      if (field.errors?.['minlength']) {
+        return `${fieldName.charAt(0).toUpperCase() + fieldName.slice(1)} must not be empty`;
+      }
+      if (field.errors?.['pattern']) {
+        return 'Year must be a 4-digit number';
+      }
+    }
+    return '';
   }
 
   deleteBook() {
@@ -37,21 +71,40 @@ export class BookDetail {
       if (confirmDelete) {
         this.bMService.removeBook(this.book()!.id);
         this.nService.showResult(this.resultMessage().type, this.resultMessage().msg);
-        this.close.emit();
+        this.navigateBack();
       }
     }
   }
 
   saveData() {
-    if (this.book() && (this.book()?.title.trim() === '' || this.book()?.author.trim() === '')) {
-      this.nService.showResult('error', 'Title and Author are required fields.');
+    if (this.bookForm.invalid) {
+      this.bookForm.markAllAsTouched();
+      this.nService.showResult('error', 'Please fill in all required fields correctly.');
       return;
     }
-    if (this.isNew()) {
-      this.bMService.addBook(this.book() as IBook);
+
+    const formValue = this.bookForm.value;
+    const bookData: IBook = {
+      id: this.book()?.id || 0,
+      title: formValue.title,
+      author: formValue.author,
+      year: formValue.year,
+      genre: formValue.genre
+    };
+
+    if (this.isNew) {
+      this.bMService.addBook(bookData);
     } else {
-      this.bMService.updateBook(this.book() as IBook);
+      this.bMService.updateBook(bookData);
     }
-    this.close.emit();
+    this.navigateBack();
+  }
+
+  navigateBack() {
+    this.router.navigate(['/library']);
+  }
+
+  cancel() {
+    this.navigateBack();
   }
 }

@@ -11,7 +11,7 @@ export class InMemoryBookService implements IBookService {
     constructor() {
         this.ws = new WebSocket('ws://localhost:3000');
         this.ws.onopen = () => {
-            this.ws.send(JSON.stringify({ type: 'getBooks' }));
+            this.loadBooks();
         };
         this.ws.onmessage = (event) => {
             this.ngZone.run(() => {
@@ -28,6 +28,10 @@ export class InMemoryBookService implements IBookService {
         };
     }
 
+    loadBooks() {
+        this.ws.send(JSON.stringify({ type: 'getBooks' }));
+    }
+
     addBook(book: IBook) {
         this.ws.send(JSON.stringify({ type: 'addBook', data: book }));
     }
@@ -38,6 +42,10 @@ export class InMemoryBookService implements IBookService {
 
     removeBook(id: number) {
         this.ws.send(JSON.stringify({ type: 'removeBook', data: { id } }));
+    }
+
+    getBook(id: number) {
+        return this.books().find(book => book.id === id);
     }
 
     getBooks() {

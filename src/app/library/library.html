@@ -1,12 +1,11 @@
 <div class="library-container">
   <div class="header">
     <h2>My Library</h2>
-    <button (click)="this.detailsVisible.set(true)" class="add-book-btn"> Add New Book </button>
+    <button (click)="switchServiceType()" class="switch-manager-btn"> 
+      {{ currentServiceType().toUpperCase() }}
+    </button>
+    <button (click)="addNewBook()" class="add-book-btn"> Add New Book </button>
   </div>
 
-  <app-book-list [books]="books()" [(selectedBook)]="selectedBook"></app-book-list>
-
-  @if (detailsVisible()) {
-    <app-book-detail [(book)]="selectedBook" (close)="closeDetails()"></app-book-detail>
-  }
+  <router-outlet></router-outlet>
 </div>

@@ -14,6 +14,10 @@ export class BookManagerService implements IBookService {
     this.serviceType() === 'memory' ? this.inMemoryService : this.httpService
   );
 
+  loadBooks() {
+    return this.currentService().loadBooks();
+  }
+
   addBook(book: IBook) {
     return this.currentService().addBook(book);
   }
@@ -26,6 +30,10 @@ export class BookManagerService implements IBookService {
     return this.currentService().removeBook(id);
   }
 
+  getBook(id: number) {
+    return this.currentService().getBook(id);
+  }
+
   getBooks() {
     return this.currentService().getBooks();
   }
@@ -34,12 +42,9 @@ export class BookManagerService implements IBookService {
     return this.currentService().getResultMessage();
   }
 
-  switchToMemory() {
-    this.serviceType.set('memory');
-  }
-
-  switchToHttp() {
-    this.serviceType.set('http');
+  switchServiceType() {
+    this.serviceType.set(this.serviceType() === 'memory' ? 'http' : 'memory');
+    this.loadBooks();
   }
 
   getCurrentServiceType() {
