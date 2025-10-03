@@ -12,7 +12,11 @@ const sseClients = new Map<number, any>();
 let books = [
   { id: 1, title: "1984", author: "George Orwell", year: "1949", genre: "Dystopian" },
   { id: 2, title: "To Kill a Mockingbird", author: "Harper Lee", year: "1960", genre: "Fiction" },
-  { id: 3, title: "The Great Gatsby", author: "F. Scott Fitzgerald", year: "1925", genre: "Fiction" }
+  { id: 3, title: "The Great Gatsby", author: "F. Scott Fitzgerald", year: "1925", genre: "Fiction" },
+  { id: 4, title: "Moby Dick", author: "Herman Melville", year: "1851", genre: "Fiction" },
+  { id: 5, title: "Pride and Prejudice", author: "Jane Austen", year: "1813", genre: "Romance" },
+  { id: 6, title: "The Catcher in the Rye", author: "J.D. Salinger", year: "1951", genre: "Fiction" },
+  { id: 7, title: "The Hobbit", author: "J.R.R. Tolkien", year: "1937", genre: "Fantasy" }
 ];
 
 app.use((req, res, next) => {
@@ -65,12 +69,7 @@ app.get('/api/books/:id', (req, res) => {
 app.post('/api/books', (req, res) => {
   const newBook = { ...req.body, id: Math.max(...books.map(b => b.id)) + 1 };
   books.push(newBook);
-  
-  // Notify SSE clients
-  sseClients.forEach(client => {
-    client.write(`data: ${JSON.stringify(books)}\n\n`);
-  });
-  
+  unifiedResponse();
   res.status(201).json(newBook);
 });
 
@@ -79,12 +78,7 @@ app.put('/api/books/:id', (req, res) => {
   const bookIndex = books.findIndex(b => b.id === id);
   if (bookIndex !== -1) {
     books[bookIndex] = { ...req.body, id };
-    
-    // Notify SSE clients
-    sseClients.forEach(client => {
-      client.write(`data: ${JSON.stringify(books)}\n\n`);
-    });
-    
+    unifiedResponse();
     res.json(books[bookIndex]);
   } else {
     res.status(404).json({ error: 'Book not found' });
@@ -96,12 +90,7 @@ app.delete('/api/books/:id', (req, res) => {
   const bookIndex = books.findIndex(b => b.id === id);
   if (bookIndex !== -1) {
     books.splice(bookIndex, 1);
-    
-    // Notify SSE clients
-    sseClients.forEach(client => {
-      client.write(`data: ${JSON.stringify(books)}\n\n`);
-    });
-    
+    unifiedResponse();
     res.status(204).send();
   } else {
     res.status(404).json({ error: 'Book not found' });
@@ -136,12 +125,7 @@ wss.on('connection', (ws: WebSocket) => {
           return;
       }
       
-      const response = JSON.stringify({ type: 'books', data: books });
-      clients.forEach(client => {
-        if (client.readyState === WebSocket.OPEN) {
-          client.send(response);
-        }
-      });
+      unifiedResponse();
     } catch (error) {
       ws.emit('error', 'Invalid message format');
     }
@@ -151,6 +135,17 @@ wss.on('connection', (ws: WebSocket) => {
     clients.delete(ws);
   });
 });
+
+function unifiedResponse() {
+  sseClients.forEach(client => {
+    client.write(`data: ${JSON.stringify(books)}\n\n`);
+  });
+  clients.forEach(client => {
+    if (client.readyState === WebSocket.OPEN) {
+      client.send(JSON.stringify({ type: 'books', data: books }));
+    }
+  });
+};
 
 server.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);

@@ -1,30 +1,25 @@
-import { Component, model, signal, effect, inject } from '@angular/core';
-import { IBook, BookManagerService } from '../core';
-import { BookList } from "./book-list/book-list";
-import { BookDetail } from "./book-detail/book-detail";
+import { Component, inject } from '@angular/core';
+import { RouterOutlet, Router } from '@angular/router';
+import { BookManagerService } from '../core';
 
 @Component({
   selector: 'library',
-  imports: [BookList, BookDetail],
+  imports: [RouterOutlet],
   templateUrl: './library.html',
   styleUrl: './library.css'
 })
 
 export class Library {
   private bMService = inject(BookManagerService);
+  private router = inject(Router);
   
-  books = this.bMService.getBooks();
-  selectedBook = model<IBook | null>(null);
-  detailsVisible = signal(false);
+  currentServiceType = this.bMService.getCurrentServiceType();
 
-  constructor() {
-    effect(() => {
-      if (this.selectedBook() !== null) this.detailsVisible.set(true);
-    });
+  switchServiceType() {
+    this.bMService.switchServiceType();
   }
 
-  closeDetails() {
-    this.selectedBook.set(null);
-    this.detailsVisible.set(false);
+  addNewBook() {
+    this.router.navigate(['/library/add']);
   }
 }

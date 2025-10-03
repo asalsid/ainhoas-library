@@ -9,9 +9,11 @@ export interface IBook {
 }
 
 export interface IBookService {
+    loadBooks(): void;
     addBook(book: IBook): void;
     updateBook(book: IBook): void;
     removeBook(id: number): void;
+    getBook(id: number): IBook | undefined;
     getBooks(): Signal<IBook[]>;
     getResultMessage(): Signal<{ type: string; msg: string }>;
 }
