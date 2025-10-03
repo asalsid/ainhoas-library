@@ -1,20 +1,11 @@
-import { Component, signal, effect } from '@angular/core';
-import { BookList } from './book-list/book-list';
-import { Book, WebsocketService } from './websocket.service';
+import { Component } from '@angular/core';
+import { RouterOutlet, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app',
-  imports: [BookList],
+  imports: [RouterOutlet, RouterLink],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
 
-export class App {
-  books = signal<Book[]>([]);
-
-  constructor(private wsService: WebsocketService) {
-    effect(() => {
-      this.books.set(this.wsService.books());
-    });
-  }
-}
+export class App {}

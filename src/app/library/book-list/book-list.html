@@ -1,0 +1,26 @@
+<div class="books-table">
+  <table>
+    <thead>
+      <tr>
+        <th>Title</th>
+        <th>Author</th>
+        <th>Year</th>
+        <th>Genre</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (book of books(); track book.id) {
+        <tr (click)="selectBook(book)">
+          <td>{{ book.title }}</td>
+          <td>{{ book.author }}</td>
+          <td>@if (book.year) { {{ book.year }} } @else { N/A }</td>
+          <td>@if (book.genre) { {{ book.genre }} } @else { N/A }</td>
+        </tr>
+      } @empty {
+        <tr>
+          <td colspan="5" class="no-books">No books available</td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</div>

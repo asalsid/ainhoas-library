@@ -1,0 +1,82 @@
+import { Injectable, inject, signal } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { IBook, IBookService } from '../interfaces/book.interface';
+
+@Injectable()
+export class HttpBookService implements IBookService {
+  private readonly apiUrl = 'http://localhost:3000/api';
+  private http = inject(HttpClient);
+  private books = signal<IBook[]>([]);
+  private resultMessage = signal<{ type: string; msg: string }>({ type: '', msg: '' });
+  private eventSource: EventSource | null = null;
+
+  constructor() {
+    this.eventSource = new EventSource(`${this.apiUrl}/books/events`);
+    this.eventSource.onopen = () => {
+      this.http.get<IBook[]>(`${this.apiUrl}/books`).subscribe({
+        next: () => {
+          this.resultMessage.set({ type: 'success', msg: 'Library data updated from server' });
+        },
+        error: (error) => {
+          this.resultMessage.set({ type: 'error', msg: `Failed to load books: ${error.status} - ${error.message}` });
+        }
+      }); 
+    };
+    this.eventSource.onmessage = (event) => {
+      const books = JSON.parse(event.data);
+      const currentBooks = this.books();
+      
+      if (JSON.stringify(currentBooks) !== JSON.stringify(books)) {
+        this.books.set(books);
+        if (currentBooks.length > 0) {
+          this.resultMessage.set({ type: 'success', msg: 'Library data updated from server' });
+        }
+      }
+    };
+    
+    this.eventSource.onerror = () => {
+      this.resultMessage.set({ type: 'error', msg: 'Real-time connection error' });
+    };
+  }
+
+  addBook(book: IBook) {
+    this.http.post<IBook>(`${this.apiUrl}/books`, book).subscribe({
+      next: () => {
+        this.resultMessage.set({ type: 'success', msg: 'Book added successfully' });
+      },
+      error: () => this.resultMessage.set({ type: 'error', msg: 'Failed to add book' })
+    });
+  }
+
+  updateBook(book: IBook) {
+    this.http.put<IBook>(`${this.apiUrl}/books/${book.id}`, book).subscribe({
+      next: () => {
+        this.resultMessage.set({ type: 'success', msg: 'Book updated successfully' });
+      },
+      error: () => this.resultMessage.set({ type: 'error', msg: 'Failed to update book' })
+    });
+  }
+
+  removeBook(id: number) {
+    this.http.delete<void>(`${this.apiUrl}/books/${id}`).subscribe({
+      next: () => {
+        this.resultMessage.set({ type: 'success', msg: 'Book removed successfully' });
+      },
+      error: () => this.resultMessage.set({ type: 'error', msg: 'Failed to remove book' })
+    });
+  }
+
+  getBooks() {
+    return this.books.asReadonly();
+  }
+
+  getResultMessage() {
+    return this.resultMessage.asReadonly();
+  }
+
+  ngOnDestroy() {
+    if (this.eventSource) {
+      this.eventSource.close();
+    }
+  }
+}
