@@ -1,4 +1,4 @@
-<div class="dialog-backdrop" (click)="closeDialog()"></div>
+<div class="dialog-backdrop" (click)="close.emit()"></div>
 <div class="dialog">
     @for (atribute of book() | keyvalue; track atribute.key) {
         @if (displayableDetails.includes(atribute.key)) {
@@ -8,5 +8,7 @@
             </p>
         }
     }
-    <button (click)="closeDialog()">Confirm</button>
+    <button (click)="saveData()">Save Changes</button>
+    @if (!isNew()) { <button (click)="deleteBook()">Delete Book</button> }
+    <button (click)="close.emit()">Cancel</button>
 </div>

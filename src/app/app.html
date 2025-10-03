@@ -1,1 +1,12 @@
-<app-book-list [books]="books()"></app-book-list>
+<nav class="navbar">
+    <div class="nav-brand">
+    <h1>Ainhoa's Library</h1>
+    </div>
+    <div class="nav-links">
+    <a routerLink="/library" routerLinkActive="active">Library</a>
+    <a routerLink="/books" routerLinkActive="active">Manage Books</a>
+    </div>
+</nav>
+<main class="main-content">
+    <router-outlet></router-outlet>
+</main>
