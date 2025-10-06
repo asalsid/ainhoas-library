@@ -17,14 +17,6 @@ button {
     font-size: 1rem;
 }
 
-.switch-manager-btn {
-    background: #007bff;
-    color: white;
-}
-.switch-manager-btn:hover {
-    background: #0069d9;
-}
-
 .add-book-btn {
     background: #28a745;
     color: white;

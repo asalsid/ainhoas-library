@@ -4,7 +4,7 @@ import { IBook, IBookService } from '../interfaces/book.interface';
 
 @Injectable()
 export class HttpBookService implements IBookService {
-  private readonly apiUrl = 'http://localhost:3000/api';
+  private readonly apiUrl = 'http://localhost:5000';
   private http = inject(HttpClient);
   private books = signal<IBook[]>([]);
   private resultMessage = signal<{ type: string; msg: string }>({ type: '', msg: '' });

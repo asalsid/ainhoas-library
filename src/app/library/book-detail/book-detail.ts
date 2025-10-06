@@ -1,4 +1,4 @@
-import { Component, computed, effect, inject, signal } from '@angular/core';
+import { Component, effect, inject, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { IBook, BookManagerService, NotificationService } from '../../core';
@@ -10,15 +10,15 @@ import { IBook, BookManagerService, NotificationService } from '../../core';
   styleUrl: './book-detail.css'
 })
 export class BookDetail {
-  private bMService = inject(BookManagerService);
-  private nService = inject(NotificationService);
+  private bookManager = inject(BookManagerService);
+  private notificationService = inject(NotificationService);
   private formBuilder = inject(FormBuilder);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   
   isNew = false;
   book = signal<IBook | null>(null);
-  resultMessage = this.bMService.getResultMessage();
+  resultMessage = this.bookManager.getResultMessage();
 
   bookForm: FormGroup = this.formBuilder.group({
     title: ['', [Validators.required, Validators.minLength(1)]],
@@ -69,8 +69,8 @@ export class BookDetail {
       const bookTitle = this.book()!.title || 'this book';
       const confirmDelete = confirm(`Are you sure you want to delete "${bookTitle}"? This action cannot be undone.`);
       if (confirmDelete) {
-        this.bMService.removeBook(this.book()!.id);
-        this.nService.showResult(this.resultMessage().type, this.resultMessage().msg);
+        this.bookManager.removeBook(this.book()!.id);
+        this.notificationService.showResult(this.resultMessage().type, this.resultMessage().msg);
         this.navigateBack();
       }
     }
@@ -79,7 +79,7 @@ export class BookDetail {
   saveData() {
     if (this.bookForm.invalid) {
       this.bookForm.markAllAsTouched();
-      this.nService.showResult('error', 'Please fill in all required fields correctly.');
+      this.notificationService.showResult('error', 'Please fill in all required fields correctly.');
       return;
     }
 
@@ -93,15 +93,16 @@ export class BookDetail {
     };
 
     if (this.isNew) {
-      this.bMService.addBook(bookData);
+      this.bookManager.addBook(bookData);
     } else {
-      this.bMService.updateBook(bookData);
+      this.bookManager.updateBook(bookData);
     }
     this.navigateBack();
   }
 
   navigateBack() {
-    this.router.navigate(['/library']);
+    const targetPlace = this.bookManager.getCurrentServiceType()() === 'memory' ? 'shop' : 'warehouse';
+    this.router.navigate(['/library', targetPlace]);
   }
 
   cancel() {

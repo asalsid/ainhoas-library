@@ -7,7 +7,6 @@ const app = express();
 const server = http.createServer(app);
 const wss = new WebSocketServer({ server });
 const clients = new Set<WebSocket>();
-const sseClients = new Map<number, any>();
 
 let books = [
   { id: 1, title: "1984", author: "George Orwell", year: "1949", genre: "Dystopian" },
@@ -18,84 +17,6 @@ let books = [
   { id: 6, title: "The Catcher in the Rye", author: "J.D. Salinger", year: "1951", genre: "Fiction" },
   { id: 7, title: "The Hobbit", author: "J.R.R. Tolkien", year: "1937", genre: "Fantasy" }
 ];
-
-app.use((req, res, next) => {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
-  
-  if (req.method === 'OPTIONS') {
-    res.status(200).end();
-    return;
-  }
-  next();
-});
-
-app.use(express.json());
-
-app.get('/api/books', (req, res) => {
-  console.log('New HTTP connection');
-  res.json(books);
-});
-
-// Server-Sent Events endpoint
-app.get('/api/books/events', (req, res) => {
-  res.setHeader('Content-Type', 'text/event-stream');
-  res.setHeader('Cache-Control', 'no-cache');
-  res.setHeader('Connection', 'keep-alive');
-  
-  // Send initial data
-  res.write(`data: ${JSON.stringify(books)}\n\n`);
-  
-  // Store this connection to send updates
-  const clientId = Date.now();
-  sseClients.set(clientId, res);
-  
-  req.on('close', () => {
-    sseClients.delete(clientId);
-  });
-});
-
-app.get('/api/books/:id', (req, res) => {
-  const id = parseInt(req.params.id);
-  const book = books.find(b => b.id === id);
-  if (book) {
-    res.json(book);
-  } else {
-    res.status(404).json({ error: 'Book not found' });
-  }
-});
-
-app.post('/api/books', (req, res) => {
-  const newBook = { ...req.body, id: Math.max(...books.map(b => b.id)) + 1 };
-  books.push(newBook);
-  unifiedResponse();
-  res.status(201).json(newBook);
-});
-
-app.put('/api/books/:id', (req, res) => {
-  const id = parseInt(req.params.id);
-  const bookIndex = books.findIndex(b => b.id === id);
-  if (bookIndex !== -1) {
-    books[bookIndex] = { ...req.body, id };
-    unifiedResponse();
-    res.json(books[bookIndex]);
-  } else {
-    res.status(404).json({ error: 'Book not found' });
-  }
-});
-
-app.delete('/api/books/:id', (req, res) => {
-  const id = parseInt(req.params.id);
-  const bookIndex = books.findIndex(b => b.id === id);
-  if (bookIndex !== -1) {
-    books.splice(bookIndex, 1);
-    unifiedResponse();
-    res.status(204).send();
-  } else {
-    res.status(404).json({ error: 'Book not found' });
-  }
-});
 
 app.use(express.static('src'));
 
@@ -125,7 +46,11 @@ wss.on('connection', (ws: WebSocket) => {
           return;
       }
       
-      unifiedResponse();
+      clients.forEach(client => {
+        if (client.readyState === WebSocket.OPEN) {
+          client.send(JSON.stringify({ type: 'books', data: books }));
+        }
+      });
     } catch (error) {
       ws.emit('error', 'Invalid message format');
     }
@@ -136,19 +61,6 @@ wss.on('connection', (ws: WebSocket) => {
   });
 });
 
-function unifiedResponse() {
-  sseClients.forEach(client => {
-    client.write(`data: ${JSON.stringify(books)}\n\n`);
-  });
-  clients.forEach(client => {
-    if (client.readyState === WebSocket.OPEN) {
-      client.send(JSON.stringify({ type: 'books', data: books }));
-    }
-  });
-};
-
 server.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
-  console.log(`REST API available at http://localhost:${PORT}/api/books`);
-  console.log(`WebSocket server is ready for connections`);
+  console.log(`WebSocket Server available at http://localhost:${PORT}`);
 });

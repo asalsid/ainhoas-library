@@ -1,4 +1,4 @@
-import { Component, inject, computed, signal } from '@angular/core';
+import { Component, inject, computed, signal, effect } from '@angular/core';
 import { Router } from '@angular/router';
 import { IBook, BookManagerService } from '../../core';
 
@@ -9,16 +9,26 @@ import { IBook, BookManagerService } from '../../core';
   styleUrl: './book-list.css'
 })
 export class BookList {
-  private bMService = inject(BookManagerService);
   private router = inject(Router);
+  private bookManager = inject(BookManagerService);
   
-  books = this.bMService.getBooks();
+  books = signal<IBook[]>([]);
+
+  constructor() {
+    effect(() => {
+      const serviceType = this.bookManager.getCurrentServiceType()();
+      console.log(`Service type changed to: ${serviceType}, loading books...`);
+      this.bookManager.loadBooks();
+    });
+
+    effect(() => {
+      this.books.set(this.bookManager.getBooks()());
+    });
+  }
   
-  // Pagination properties
   currentPage = signal(1);
   itemsPerPage = signal(5);
   
-  // Computed properties for pagination
   totalPages = computed(() => 
     Math.ceil(this.books().length / this.itemsPerPage())
   );

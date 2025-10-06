@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { bookResolver } from './core/resolvers/book.resolver';
+import { bookResolver, placeResolver } from './core';
 
 export const routes: Routes = [
   {
@@ -13,7 +13,13 @@ export const routes: Routes = [
     children: [
       {
         path: '',
-        loadComponent: () => import('./library/book-list/book-list').then(m => m.BookList)
+        redirectTo: '/library/shop',
+        pathMatch: 'full'
+      },
+      {
+        path: ':place',
+        loadComponent: () => import('./library/book-list/book-list').then(m => m.BookList),
+        resolve: { placeResolver }
       },
       {
         path: 'add',
@@ -29,6 +35,6 @@ export const routes: Routes = [
   },
   {
     path: '**',
-    redirectTo: '/library'
+    redirectTo: '/library/shop'
   }
 ];
