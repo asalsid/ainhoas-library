@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { NgZone } from '@angular/core';
-import { InMemoryBookService } from './inmemory-book.service';
+import { WebSocketBookService } from './websocket-book.service';
 import { IBook } from '../interfaces/book.interface';
 
 class MockWebSocket {
@@ -42,8 +42,8 @@ class MockWebSocket {
   }
 }
 
-describe('InMemoryBookService', () => {
-  let service: InMemoryBookService;
+describe('WebSocketBookService', () => {
+  let service: WebSocketBookService;
   let mockWebSocket: MockWebSocket;
   let ngZone: NgZone;
 
@@ -54,7 +54,7 @@ describe('InMemoryBookService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [InMemoryBookService]
+      providers: [WebSocketBookService]
     });
 
     ngZone = TestBed.inject(NgZone);
@@ -64,7 +64,7 @@ describe('InMemoryBookService', () => {
       return mockWebSocket as any;
     });
 
-    service = TestBed.inject(InMemoryBookService);
+    service = TestBed.inject(WebSocketBookService);
   });
 
   it('should be created', () => {

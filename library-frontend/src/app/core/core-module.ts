@@ -4,7 +4,7 @@ import { HTTP_INTERCEPTORS } from '@angular/common/http';
 
 import { BookManagerService } from './services/book-manager.service';
 import { HttpBookService } from './services/http-book.service';
-import { InMemoryBookService } from './services/inmemory-book.service';
+import { WebSocketBookService } from './services/websocket-book.service';
 import { ErrorInterceptor } from './interceptors/error.interceptor';
 
 @NgModule({
@@ -12,7 +12,7 @@ import { ErrorInterceptor } from './interceptors/error.interceptor';
   providers: [
     BookManagerService,
     HttpBookService,
-    InMemoryBookService,
+    WebSocketBookService,
     {
       provide: HTTP_INTERCEPTORS,
       useClass: ErrorInterceptor,

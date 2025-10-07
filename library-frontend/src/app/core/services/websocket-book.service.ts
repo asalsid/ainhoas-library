@@ -2,7 +2,7 @@ import { Injectable, signal, NgZone, inject } from '@angular/core';
 import { IBook, IBookService } from '../interfaces/book.interface';
 
 @Injectable()
-export class InMemoryBookService implements IBookService {
+export class WebSocketBookService implements IBookService {
     private ws: WebSocket;
     private books = signal<IBook[]>([]);
     private resultMessage = signal<{ type: string; msg: string }>({ type: '', msg: '' });

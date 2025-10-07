@@ -1,17 +1,17 @@
 import { Injectable, inject, signal, computed } from '@angular/core';
 import { IBook, IBookService } from '../interfaces/book.interface';
-import { InMemoryBookService } from './inmemory-book.service';
+import { WebSocketBookService } from './websocket-book.service';
 import { HttpBookService } from './http-book.service';
 
 @Injectable()
 export class BookManagerService implements IBookService {
-  private inMemoryService = inject(InMemoryBookService);
+  private webSocketService = inject(WebSocketBookService);
   private httpService = inject(HttpBookService);
   
   private serviceType = signal<'memory' | 'http'>('http');
   
   private currentService = computed(() => 
-    this.serviceType() === 'memory' ? this.inMemoryService : this.httpService
+    this.serviceType() === 'memory' ? this.webSocketService : this.httpService
   );
 
   loadBooks() {
