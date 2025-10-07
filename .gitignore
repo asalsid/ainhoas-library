@@ -60,3 +60,11 @@ Thumbs.db
 /library-backend/*.db
 /library-backend/*.db-shm
 /library-backend/*.db-wal
+
+# Visual Studio Code
+.vscode/*
+.vscode/settings.json
+.vscode/tasks.json
+.vscode/launch.json
+.vscode/extensions.json
+.history/*
