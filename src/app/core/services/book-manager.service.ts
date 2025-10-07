@@ -42,9 +42,8 @@ export class BookManagerService implements IBookService {
     return this.currentService().getResultMessage();
   }
 
-  switchServiceType() {
-    this.serviceType.set(this.serviceType() === 'memory' ? 'http' : 'memory');
-    this.loadBooks();
+  setServiceType(type: 'memory' | 'http') {
+    this.serviceType.set(type);
   }
 
   getCurrentServiceType() {

@@ -1,12 +1,42 @@
 .library-container {
     max-width: 1200px;
     margin: 0 auto;
+    padding: 0 1rem;
+}
+
+@media (max-width: 768px) {
+    .library-container {
+        padding: 0 0.75rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .library-container {
+        padding: 0 0.5rem;
+    }
 }
 .header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 2rem;
+    gap: 1rem;
+}
+
+@media (max-width: 768px) {
+    .header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .header {
+        margin-bottom: 1rem;
+        gap: 0.75rem;
+    }
 }
 
 button {
@@ -15,14 +45,21 @@ button {
     border-radius: 4px;
     cursor: pointer;
     font-size: 1rem;
+    transition: background-color 0.2s ease;
 }
 
-.switch-manager-btn {
-    background: #007bff;
-    color: white;
+@media (max-width: 768px) {
+    button {
+        padding: 0.875rem 1.25rem;
+        width: 100%;
+    }
 }
-.switch-manager-btn:hover {
-    background: #0069d9;
+
+@media (max-width: 480px) {
+    button {
+        padding: 1rem;
+        font-size: 16px;
+    }
 }
 
 .add-book-btn {
