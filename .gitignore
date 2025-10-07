@@ -45,3 +45,11 @@ Thumbs.db
 # .NET
 /library-backend/bin
 /library-backend/obj
+
+# Visual Studio Code
+/library-backend/.vscode/*
+/library-backend/.vscode/settings.json
+/library-backend/.vscode/tasks.json
+/library-backend/.vscode/launch.json
+/library-backend/.vscode/extensions.json
+/library-backend/.history/*
