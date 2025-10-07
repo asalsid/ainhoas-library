@@ -43,13 +43,20 @@
 Thumbs.db
 
 # .NET
-/library-backend/bin
-/library-backend/obj
-
-# Visual Studio Code
-/library-backend/.vscode/*
-/library-backend/.vscode/settings.json
-/library-backend/.vscode/tasks.json
-/library-backend/.vscode/launch.json
-/library-backend/.vscode/extensions.json
-/library-backend/.history/*
+/library-backend/bin/
+/library-backend/obj/
+/library-backend/*.user
+/library-backend/*.userosscache
+/library-backend/*.sln.docstates
+/library-backend/*.suo
+/library-backend/*.sln.cache
+/library-backend/project.lock.json
+/library-backend/project.fragment.lock.json
+/library-backend/artifacts/
+/library-backend/.vs/
+/library-backend/.vscode/
+/library-backend/appsettings.Development.json
+/library-backend/appsettings.Local.json
+/library-backend/*.db
+/library-backend/*.db-shm
+/library-backend/*.db-wal

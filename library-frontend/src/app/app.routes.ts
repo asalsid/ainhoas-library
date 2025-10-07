@@ -17,11 +17,6 @@ export const routes: Routes = [
         pathMatch: 'full'
       },
       {
-        path: ':place',
-        loadComponent: () => import('./library/book-list/book-list').then(m => m.BookList),
-        resolve: { placeResolver }
-      },
-      {
         path: 'add',
         loadComponent: () => import('./library/book-detail/book-detail').then(m => m.BookDetail),
         resolve: { book: bookResolver }
@@ -30,6 +25,11 @@ export const routes: Routes = [
         path: 'edit/:id',
         loadComponent: () => import('./library/book-detail/book-detail').then(m => m.BookDetail),
         resolve: { book: bookResolver }
+      },
+      {
+        path: ':place',
+        loadComponent: () => import('./library/book-list/book-list').then(m => m.BookList),
+        resolve: { placeResolver }
       }
     ]
   },
