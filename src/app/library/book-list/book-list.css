@@ -8,6 +8,24 @@
     align-items: center;
     margin-bottom: 1rem;
     padding: 0.5rem 0;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+@media (max-width: 768px) {
+    .pagination-header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.5rem;
+    }
+    
+    .pagination-info {
+        text-align: center;
+    }
+    
+    .items-per-page {
+        justify-content: center;
+    }
 }
 
 .pagination-info {
@@ -42,6 +60,28 @@ table {
     border-collapse: collapse;
     background: white;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    overflow-x: auto;
+}
+
+@media (max-width: 768px) {
+    .books-table {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    table {
+        min-width: 600px;
+    }
+    
+    th, td {
+        padding: 0.5rem;
+        font-size: 0.9rem;
+    }
+    
+    th:nth-child(3),
+    td:nth-child(3) {
+        display: none;
+    }
 }
 
 th, td {
@@ -72,6 +112,34 @@ tr:hover {
     align-items: center;
     gap: 0.5rem;
     margin-top: 1rem;
+    flex-wrap: wrap;
+}
+
+@media (max-width: 480px) {
+    .pagination-controls {
+        gap: 0.25rem;
+    }
+    
+    .pagination-btn {
+        padding: 0.4rem 0.6rem;
+        font-size: 0.8rem;
+        min-width: 2rem;
+    }
+    
+    .pagination-btn.page-number {
+        min-width: 2rem;
+    }
+    
+    .pagination-btn.page-number:not(.active) {
+        display: none;
+    }
+}
+
+@media (min-width: 481px) and (max-width: 768px) {
+    .pagination-btn {
+        padding: 0.45rem 0.65rem;
+        font-size: 0.85rem;
+    }
 }
 
 .pagination-btn {
