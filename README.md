@@ -19,6 +19,8 @@ It supports **two different backend architectures**:
 
 ### Setup
 
+Run the following steps in your prefered terminal;
+
 1. **Clone the project:**
    ```bash
    git clone https://github.com/asalsid/ainhoas-library.git
@@ -39,23 +41,25 @@ It supports **two different backend architectures**:
 
 ## Running the Application
 
-The frontend can access both backends, therefor, initialice each of theme in a separate bash.
+The frontend can access both backends, therefor, run each of the following steps in different terminals:
 
 1. **Start the .NET backend:**
    ```bash
+   cd library-backend
    dotnet run
    ```
    Backend will run on `http://localhost:5000`
 
 2. **Start the Node.js server:**
    ```bash
-   cd ../library-frontend
+   cd library-frontend
    npm run server
    ```
    Server will run on `http://localhost:3000`
 
 3. **Start the Angular frontend:**
    ```bash
+   cd library-frontend
    npm start
    ```
    Frontend will run on `http://localhost:4200`
