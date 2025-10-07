@@ -1,41 +1,41 @@
 # See https://docs.github.com/get-started/getting-started-with-git/ignoring-files for more about ignoring files.
 
 # Compiled output
-/dist
-/tmp
-/out-tsc
-/bazel-out
+/library-frontend/dist
+/library-frontend/tmp
+/library-frontend/out-tsc
+/library-frontend/bazel-out
 
 # Node
-/node_modules
-npm-debug.log
-yarn-error.log
+/library-frontend/node_modules
+/library-frontend/npm-debug.log
+/library-frontend/yarn-error.log
 
 # IDEs and editors
-.idea/
-.project
-.classpath
-.c9/
-*.launch
-.settings/
-*.sublime-workspace
+/library-frontend/.idea/
+/library-frontend/.project
+/library-frontend/.classpath
+/library-frontend/.c9/
+/library-frontend/*.launch
+/library-frontend/.settings/
+/library-frontend/*.sublime-workspace
 
 # Visual Studio Code
-.vscode/*
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
-.history/*
+/library-frontend/.vscode/*
+/library-frontend/.vscode/settings.json
+/library-frontend/.vscode/tasks.json
+/library-frontend/.vscode/launch.json
+/library-frontend/.vscode/extensions.json
+/library-frontend/.history/*
 
 # Miscellaneous
-/.angular/cache
-.sass-cache/
-/connect.lock
-/coverage
-/libpeerconnection.log
-testem.log
-/typings
+/library-frontend/.angular/cache
+/library-frontend/.sass-cache/
+/library-frontend/connect.lock
+/library-frontend/coverage
+/library-frontend/libpeerconnection.log
+/library-frontend/testem.log
+/library-frontend/typings
 
 # System files
 .DS_Store
